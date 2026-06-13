@@ -1,0 +1,35 @@
+# Entornos virtuales
+venv/
+env/
+
+# Archivos de Python generados automáticamente
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Bases de datos (Evita subir datos de tu BD local)
+*.db
+*.sqlite3
+ciberforense.db
+
+# Imágenes y fotos (según lo que mencionaste)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+# Si quieres mantener los logos (ForenSys-LOGO.png, Forensys-lab.png, forensys-vision.png) 
+# puedes forzar su subida usando: git add ForenSys-LOGO.png -f o quitando *.png de aquí.
+
+# Modelos de Machine Learning (suelen ser pesados o privados)
+ml_models/
+
+# Variables de entorno y secretos
+.env
+.env.*
+secretos/
+keys/
+
+# Archivos de SO
+.DS_Store
+Thumbs.db

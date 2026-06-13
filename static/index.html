@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForenSys Vision V1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+  <!-- ===== LOGIN VIEW (full screen) ===== -->
+  <div id="view-login" class="view active">
+    <div class="login-glow-top"></div>
+    <div class="login-glow-bottom"></div>
+
+    <div class="login-container fade-in">
+      <div class="login-header">
+        <div class="login-icon">
+          <img src="forensys-vision.png" alt="ForenSys Vision" class="login-logo-img">
+        </div>
+        <h1>ForenSys Vision V1</h1>
+        <p>Sistema de Inteligencia Forense Digital</p>
+        <div class="login-status">
+          <span class="sidebar-status-dot"></span>
+          Sistema Operativo
+        </div>
+      </div>
+
+      <div class="login-card fade-in">
+        <div class="login-card-header">
+          <h2>Autenticación requerida</h2>
+        </div>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="mb-1">
+            <label class="text-muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Usuario</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input type="text" id="username" class="input-field with-icon" placeholder="Ingresa tu usuario" required autocomplete="username" autofocus>
+            </div>
+          </div>
+          <div class="mb-1">
+            <label class="text-muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Contraseña</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input type="password" id="password" class="input-field with-icon" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+          </div>
+          <div id="login-error" class="hidden" style="color:var(--high);font-size:0.8125rem;margin-bottom:0.75rem;">Credenciales inválidas</div>
+          <button type="submit" class="btn btn-primary btn-full btn-lg" id="login-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Acceder al Sistema
+          </button>
+        </form>
+        <div class="login-footer">FORENSYS VISION V1 • USO ACADÉMICO</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APP LAYOUT (sidebar + content) ===== -->
+  <div id="app-layout" class="app-layout hidden">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="forensys-vision.png" alt="ForenSys Vision" class="sidebar-logo-img">
+        </div>
+      </div>
+
+      <div class="sidebar-status">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span class="sidebar-status-label">SISTEMA ACTIVO</span>
+        <span class="sidebar-status-indicator"></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a onclick="navigateTo('dashboard')" id="nav-dashboard" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('suspects')" id="nav-suspects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Gestión de Sospechosos</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('forensics')" id="nav-forensics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+          <span>Análisis Forense</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('about')" id="nav-about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>Acerca de</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="sidebar-avatar">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-username">Usuario</div>
+            <div class="sidebar-user-role" id="sidebar-role">Operador</div>
+          </div>
+        </div>
+        <button onclick="logout()" class="btn btn-danger btn-full" style="font-size:0.75rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar Sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+      <!-- DASHBOARD -->
+      <div id="view-dashboard" class="view active">
+        <div class="view-content">
+          <div class="page-header">
+            <div>
+              <h1>Centro de Control &amp; Monitoreo</h1>
+              <p id="dashboard-welcome">Bienvenido al sistema • Monitoreo en tiempo real</p>
+            </div>
+            <div class="online-badge">
+              <span class="online-dot"></span>
+              En línea
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div>
+              <div class="camera-feed" id="live-camera">
+                <div class="camera-placeholder" id="camera-status-msg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                  </svg>
+                  <p>Iniciar transmisión de cámara para reconocimiento facial</p>
+                </div>
+                <div class="scan-overlay" style="display:none;" id="scan-overlay"></div>
+                <div class="camera-hud" id="camera-hud" style="display:none;">
+                  <div class="camera-hud-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+                    <span class="camera-hud-text" id="cam-status-text">Transmitiendo</span>
+                  </div>
+                  <div class="camera-hud-right">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span class="camera-hud-text">EN VIVO</span>
+                  </div>
+                </div>
+                <div class="camera-bottom" id="camera-bottom" style="display:none;">
+                  <div class="camera-bottom-tag">
+                    <span>FORENSYS VISION • CÁMARA PRINCIPAL</span>
+                  </div>
+                </div>
+                <div class="camera-corners" id="camera-corners" style="display:none;">
+                  <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
+                </div>
+              </div>
+
+              <div class="camera-source-panel">
+                <div class="camera-source-grid">
+                  <label>
+                    <span>Fuente</span>
+                    <select id="camera-source-type" class="input-field" onchange="handleCameraSourceTypeChange()">
+                      <option value="local">Camara local / virtual</option>
+                      <option value="url">Camara IP / RTSP</option>
+                    </select>
+                  </label>
+                  <label id="local-camera-field">
+                    <span>Dispositivo</span>
+                    <select id="camera-device-select" class="input-field">
+                      <option value="0|dshow">Camara local 0 (DirectShow)</option>
+                    </select>
+                  </label>
+                  <label id="url-camera-field" style="display:none;">
+                    <span>URL de transmision</span>
+                    <input id="camera-url-input" class="input-field" type="text" placeholder="rtsp://usuario:clave@192.168.1.20:554/stream1">
+                  </label>
+                </div>
+                <div class="camera-source-actions">
+                  <button type="button" class="btn btn-secondary" onclick="loadCameraDevices()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                      <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/>
+                    </svg>
+                    Detectar dispositivos
+                  </button>
+                  <span id="camera-source-status" class="camera-source-status">Camara predeterminada lista.</span>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:1rem;margin-top:1rem;">
+                <button id="btn-camera-on" class="btn btn-primary flex-1" onclick="startCamera()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                  Activar Escáner Biométrico
+                </button>
+                <button id="btn-camera-off" class="btn btn-danger flex-1" onclick="stopCamera()" style="display:none;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                    <rect x="6" y="6" width="12" height="12" rx="2" ry="2"/>
+                  </svg>
+                  Apagar Cámara
+                </button>
+              </div>
+            </div>
+
+            <div class="dash-section" style="max-height:600px;display:flex;flex-direction:column;">
+              <div class="dash-section-title">
+                <h2>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  Alertas Activas
+                </h2>
+              </div>
+              <div class="alerts-panel" id="alerts-container">
+                <div class="text-muted" style="font-size:0.9rem;text-align:center;padding:2rem;">Esperando incidencias...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUSPECTS -->
+      <div id="view-suspects" class="view">
+        <div class="view-content" style="max-width:800px;">
+          <div class="page-header">
+            <div>
+              <h1>Base de Datos de Sujetos</h1>
+              <p>Gestión de sospechosos y registros biométricos</p>
+            </div>
+          </div>
+
+          <div class="panel mb-2">
+            <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Registrar Nuevo Sujeto</h2>
+            <form id="suspect-form" onsubmit="handleAddSuspect(event)">
+              <div class="grid-2 mb-1">
+                <input type="text" id="s-fname" class="input-field" placeholder="Nombres" required>
+                <input type="text" id="s-lname" class="input-field" placeholder="Apellidos" required>
+                <input type="text" id="s-id" class="input-field" placeholder="Cédula / Identificador Único" required>
+                <input type="text" id="s-behavior" class="input-field" placeholder="Conductas / Antecedentes (ej. hurto, homicidio)" required>
+              </div>
+
+              <div style="border:1px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
+                <p class="text-muted mb-1" style="font-size:0.875rem;">Cámara de Fichaje (Foto Facial)</p>
+                <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+                  <input type="file" id="s-photo" accept="image/*" style="display:none;">
+                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('s-photo').click()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Subir Foto
+                  </button>
+                  <button type="button" class="btn btn-secondary" onclick="openWebcamModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                      <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                    </svg>
+                    Capturar con Cámara
+                  </button>
+                </div>
+                <p id="s-photo-name" class="mt-1" style="color:var(--text);font-size:0.8rem;"></p>
+              </div>
+
+              <div style="border:1px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
+                <p class="text-muted mb-1" style="font-size:0.875rem;">Huellero USB Digital (Simulado)</p>
+                <input type="file" id="s-fingerprint" accept="image/*" style="display:none;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('s-fingerprint').click()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Subir Captura de Huella
+                </button>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full btn-lg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Registrar Sujeto en Base de Datos
+              </button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Registros Recientes</h2>
+            <div id="suspects-list" style="min-height:100px;">
+              Cargando...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORENSICS -->
+      <div id="view-forensics" class="view">
+        <div class="view-content" style="max-width:800px;">
+          <div class="page-header">
+            <div>
+              <h1>Algoritmo Predictivo Forense</h1>
+              <p>Coteja evidencias y modus operandi con la base de datos de sospechosos</p>
+            </div>
+          </div>
+
+          <div class="panel mb-2">
+            <form id="forensic-form" onsubmit="runAlgorithm(event)">
+              <label style="display:block;font-size:0.8125rem;color:var(--text);margin-bottom:0.5rem;">
+                Tipología del Crimen / M.O reportado en la escena:
+              </label>
+              <select id="crime-type" class="input-field mb-1" required>
+                <option value="">Seleccione Conducta Base...</option>
+                <option value="hurto">Hurto Agravado / Robo</option>
+                <option value="homicidio">Homicidio</option>
+                <option value="secuestro">Secuestro / Extorsión</option>
+                <option value="ciberataque">Ciberataque / Fraude Digital</option>
+              </select>
+
+              <label style="display:block;font-size:0.8125rem;color:var(--text);margin:1rem 0 0.5rem;">
+                Evidencia Dactilar Recopilada (Opcional):
+              </label>
+              <input type="file" id="f-evidence" accept="image/*" class="input-field mb-1" style="padding:0.5rem;">
+
+              <button type="submit" class="btn btn-danger btn-full btn-lg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                EJECUTAR ANÁLISIS PREDICTIVO
+              </button>
+            </form>
+
+            <div id="algorithm-results" class="mt-2 hidden results-box">
+              <h3 style="color:var(--accent-bright);margin-bottom:0.5rem;">REPORTE DEL ALGORITMO</h3>
+              <div id="results-content" class="mt-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div id="view-about" class="view">
+        <div class="view-content" style="max-width:750px;">
+          <div class="page-header">
+            <div>
+              <h1>Acerca del Proyecto</h1>
+              <p>ForenSys Vision V1 — Sistema de Inteligencia Forense Digital</p>
+            </div>
+          </div>
+
+          <div class="panel text-center mb-2">
+            <p class="text-muted" style="margin-bottom:2rem;line-height:1.7;">
+              <strong style="color:var(--text);">ForenSys Vision V1</strong> es un sistema de inteligencia forense digital desarrollado como proyecto de grado. Integra reconocimiento facial en tiempo real mediante OpenCV LBPH, un motor de predicción estadística de conductas delictivas, gestión de base de datos de sospechosos y monitoreo biométrico en vivo.
+            </p>
+
+            <div style="border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem;background:rgba(37,99,235,0.03);">
+              <h3 style="color:var(--accent-bright);margin-bottom:1rem;font-size:1rem;">Desarrollador</h3>
+              <p style="font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Andrés González</p>
+              <p class="text-muted" style="font-size:0.875rem;margin-bottom:1.5rem;">Desarrollador de Software | Fullstack Junior</p>
+              <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+                <a href="https://github.com/AndresGonzalezDev444" target="_blank" rel="noopener" class="btn btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  GitHub
+                </a>
+                <a href="https://andresgonzalezdev.netlify.app/" target="_blank" rel="noopener" class="btn btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  Portfolio Web
+                </a>
+                <a href="https://www.linkedin.com/in/andres-gonzalez444" target="_blank" rel="noopener" class="btn btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="#0A66C2" style="width:16px;height:16px;"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  LinkedIn
+                </a>
+              </div>
+            </div>
+
+            <div class="about-tech-grid">
+              <div class="about-tech-item">
+                <h4>Tecnologías</h4>
+                <ul>
+                  <li>Python 3 + FastAPI</li>
+                  <li>OpenCV + LBPH Facial Recognition</li>
+                  <li>SQLAlchemy + SQLite</li>
+                  <li>Scikit-learn (Predicción)</li>
+                  <li>HTML5 / CSS3 / JavaScript</li>
+                </ul>
+              </div>
+              <div class="about-tech-item">
+                <h4>Funcionalidades</h4>
+                <ul>
+                  <li>Reconocimiento facial en vivo</li>
+                  <li>Gestión CRUD de sospechosos</li>
+                  <li>Captura de foto con webcam</li>
+                  <li>Algoritmo predictivo forense</li>
+                  <li>Autenticación con roles</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="color:rgba(255,255,255,0.15);font-size:0.75rem;margin-top:2rem;">v1.0 — 2026 — Cestelco</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ===== WEBCAM MODAL ===== -->
+  <div id="webcam-modal" class="webcam-modal">
+    <h3 style="color:var(--accent-bright);">Captura Facial en Vivo</h3>
+    <div class="webcam-controls">
+      <label>
+        <span>Camara de captura</span>
+        <select id="webcam-device-select" class="input-field" onchange="restartWebcamPreview()">
+          <option value="">Camara predeterminada</option>
+        </select>
+      </label>
+      <label>
+        <span>Angulo</span>
+        <select id="webcam-angle-select" class="input-field">
+          <option value="front">Frontal</option>
+          <option value="left_profile">Perfil izquierdo</option>
+          <option value="right_profile">Perfil derecho</option>
+          <option value="semi_profile">Semi perfil</option>
+        </select>
+      </label>
+      <button type="button" class="btn btn-secondary" onclick="loadBrowserCameraDevices()">Detectar</button>
+    </div>
+    <video id="webcam-video" autoplay playsinline></video>
+    <canvas id="webcam-canvas"></canvas>
+    <img id="webcam-preview" class="preview" />
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-primary" onclick="takeWebcamPhoto()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/></svg>
+        Tomar Foto
+      </button>
+      <button class="btn btn-secondary" onclick="retakeWebcamPhoto()" id="retake-btn" style="display:none;">Reintentar</button>
+      <button class="btn btn-success" onclick="confirmWebcamPhoto()" id="confirm-btn" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"/></svg>
+        Usar esta foto
+      </button>
+      <button class="btn btn-danger" onclick="closeWebcamModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
