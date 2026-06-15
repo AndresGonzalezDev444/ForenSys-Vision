@@ -210,14 +210,24 @@ def video_stop():
     stop_stream()
     return {"ok": True}
 
-from ml_models.statistical_predictor import predict_suspect_by_crime
+from fastapi.responses import FileResponse
+import shutil
 
-@app.get("/api/algorithm/predict")
-def algorithm_predict(crime_type: str, db: Session = Depends(get_db)):
-    result = predict_suspect_by_crime(db, crime_type)
-    if not result or not result["suspect"]:
-        return {"suspect": None, "score": 0}
-    return {"suspect": {"first_name": result["suspect"].first_name, "last_name": result["suspect"].last_name, "id": result["suspect"].id}, "score": result["score"]}
+@app.get("/api/database/export")
+def export_database(current_user: models.User = Depends(get_current_user)):
+    db_path = "ciberforense.db"
+    if not os.path.exists(db_path):
+        raise HTTPException(status_code=404, detail="Database not found")
+    return FileResponse(db_path, media_type="application/octet-stream", filename="ciberforense.db")
+
+@app.post("/api/database/import")
+def import_database(file: UploadFile = File(...), current_user: models.User = Depends(get_current_user)):
+    db_path = "ciberforense.db"
+    engine.dispose()
+    with open(db_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"ok": True, "message": "Database imported successfully"}
+
 
 if not os.path.exists("static"):
     os.makedirs("static")

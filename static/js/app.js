@@ -486,34 +486,51 @@ function stopCamera() {
 
 function startCameraSimulation() { startCamera(); }
 
-async function runAlgorithm(e) {
-  e.preventDefault();
-  const crimeType = document.getElementById('crime-type').value;
-  if (!crimeType) return;
-
+async function exportDB() {
+  if (!currentToken) return;
   try {
-    const res = await fetch(`/api/algorithm/predict?crime_type=${crimeType}`, {
+    const res = await fetch('/api/database/export', {
       headers: { 'Authorization': `Bearer ${currentToken}` }
     });
-
     if (res.ok) {
-      const data = await res.json();
-      const resContainer = document.getElementById('algorithm-results');
-      const resContent = document.getElementById('results-content');
-
-      resContainer.classList.remove('hidden');
-
-      if (data.suspect) {
-        resContent.innerHTML = `
-          <p><strong>Cálculo Predictivo:</strong> Alta probabilidad encontrada.</p>
-          <p><strong>Sujeto más probable:</strong> <span style="color: var(--high); font-size: 1.1rem;">${data.suspect.first_name} ${data.suspect.last_name}</span></p>
-          <p><strong>Razón:</strong> Coincidencia exacta con perfiles de antecedentes de ${crimeType}. Puntuación: ${data.score}%</p>
-        `;
-      } else {
-        resContent.innerHTML = `<p>No hay coincidencias estadísticamente significativas en la base de datos para este M.O.</p>`;
-      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ciberforense.db';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } else {
+      alert("Error al exportar la base de datos.");
     }
   } catch (err) {
     console.error(err);
   }
+}
+
+async function importDB(event) {
+  if (!currentToken) return;
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch('/api/database/import', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${currentToken}` },
+      body: formData
+    });
+    if (res.ok) {
+      alert("Base de datos importada exitosamente. Recargando...");
+      window.location.reload();
+    } else {
+      alert("Error al importar la base de datos.");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  event.target.value = '';
 }

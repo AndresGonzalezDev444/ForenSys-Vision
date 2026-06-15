@@ -99,13 +99,7 @@
           <span>Gestión de Sospechosos</span>
           <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </a>
-        <a onclick="navigateTo('forensics')" id="nav-forensics">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-          </svg>
-          <span>Análisis Forense</span>
-          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </a>
+
         <a onclick="navigateTo('about')" id="nav-about">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -122,6 +116,15 @@
             <div class="sidebar-user-name" id="sidebar-username">Usuario</div>
             <div class="sidebar-user-role" id="sidebar-role">Operador</div>
           </div>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+          <button onclick="exportDB()" class="btn btn-secondary flex-1" style="font-size:0.7rem; padding: 0.5rem;" title="Exportar BD">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button onclick="document.getElementById('import-db-input').click()" class="btn btn-secondary flex-1" style="font-size:0.7rem; padding: 0.5rem;" title="Importar BD">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </button>
+          <input type="file" id="import-db-input" style="display:none;" accept=".db" onchange="importDB(event)">
         </div>
         <button onclick="logout()" class="btn btn-danger btn-full" style="font-size:0.75rem;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
@@ -312,49 +315,7 @@
         </div>
       </div>
 
-      <!-- FORENSICS -->
-      <div id="view-forensics" class="view">
-        <div class="view-content" style="max-width:800px;">
-          <div class="page-header">
-            <div>
-              <h1>Algoritmo Predictivo Forense</h1>
-              <p>Coteja evidencias y modus operandi con la base de datos de sospechosos</p>
-            </div>
-          </div>
 
-          <div class="panel mb-2">
-            <form id="forensic-form" onsubmit="runAlgorithm(event)">
-              <label style="display:block;font-size:0.8125rem;color:var(--text);margin-bottom:0.5rem;">
-                Tipología del Crimen / M.O reportado en la escena:
-              </label>
-              <select id="crime-type" class="input-field mb-1" required>
-                <option value="">Seleccione Conducta Base...</option>
-                <option value="hurto">Hurto Agravado / Robo</option>
-                <option value="homicidio">Homicidio</option>
-                <option value="secuestro">Secuestro / Extorsión</option>
-                <option value="ciberataque">Ciberataque / Fraude Digital</option>
-              </select>
-
-              <label style="display:block;font-size:0.8125rem;color:var(--text);margin:1rem 0 0.5rem;">
-                Evidencia Dactilar Recopilada (Opcional):
-              </label>
-              <input type="file" id="f-evidence" accept="image/*" class="input-field mb-1" style="padding:0.5rem;">
-
-              <button type="submit" class="btn btn-danger btn-full btn-lg">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                </svg>
-                EJECUTAR ANÁLISIS PREDICTIVO
-              </button>
-            </form>
-
-            <div id="algorithm-results" class="mt-2 hidden results-box">
-              <h3 style="color:var(--accent-bright);margin-bottom:0.5rem;">REPORTE DEL ALGORITMO</h3>
-              <div id="results-content" class="mt-1"></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ABOUT -->
       <div id="view-about" class="view">
