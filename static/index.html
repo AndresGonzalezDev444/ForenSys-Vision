@@ -3,31 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ForenSys Vision V1</title>
+  <meta name="description" content="ForenSys Vision V2 — Sistema de Inteligencia Forense Digital con reconocimiento facial, placas vehiculares, trazado de rutas y reportes periciales.">
+  <title>ForenSys Vision V2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Leaflet.js para módulo de Trazado de Rutas -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-  <!-- ===== LOGIN VIEW (full screen) ===== -->
+
+  <!-- ===== LOGIN VIEW ===== -->
   <div id="view-login" class="view active">
     <div class="login-glow-top"></div>
     <div class="login-glow-bottom"></div>
-
     <div class="login-container fade-in">
       <div class="login-header">
         <div class="login-icon">
           <img src="forensys-vision.png" alt="ForenSys Vision" class="login-logo-img">
         </div>
-        <h1>ForenSys Vision V1</h1>
+        <h1>ForenSys Vision V2</h1>
         <p>Sistema de Inteligencia Forense Digital</p>
         <div class="login-status">
           <span class="sidebar-status-dot"></span>
           Sistema Operativo
         </div>
       </div>
-
       <div class="login-card fade-in">
         <div class="login-card-header">
           <h2>Autenticación requerida</h2>
@@ -37,8 +40,7 @@
             <label class="text-muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Usuario</label>
             <div class="input-icon-wrapper">
               <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
               <input type="text" id="username" class="input-field with-icon" placeholder="Ingresa tu usuario" required autocomplete="username" autofocus>
             </div>
@@ -47,8 +49,7 @@
             <label class="text-muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Contraseña</label>
             <div class="input-icon-wrapper">
               <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
               <input type="password" id="password" class="input-field with-icon" placeholder="••••••••" required autocomplete="current-password">
             </div>
@@ -61,15 +62,23 @@
             Acceder al Sistema
           </button>
         </form>
-        <div class="login-footer">FORENSYS VISION V1 • USO ACADÉMICO</div>
+        <div class="login-footer">FORENSYS VISION V2 • USO ACADÉMICO</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== APP LAYOUT (sidebar + content) ===== -->
+  <!-- ===== APP LAYOUT ===== -->
   <div id="app-layout" class="app-layout hidden">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+
+    <!-- HAMBURGER (mobile) -->
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <!-- Overlay para cerrar sidebar en mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR IZQUIERDO -->
+    <aside class="sidebar" id="main-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
           <img src="forensys-vision.png" alt="ForenSys Vision" class="sidebar-logo-img">
@@ -77,7 +86,7 @@
       </div>
 
       <div class="sidebar-status">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
         <span class="sidebar-status-label">SISTEMA ACTIVO</span>
@@ -87,22 +96,59 @@
       <nav class="sidebar-nav">
         <a onclick="navigateTo('dashboard')" id="nav-dashboard" class="active">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
           </svg>
           <span>Dashboard</span>
           <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </a>
+        <div class="nav-separator"><span>Módulos</span></div>
+        <a onclick="navigateTo('facial')" id="nav-facial">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/><path d="M7 21v-1a5 5 0 0 1 10 0v1"/>
+            <path d="M15 8a3 3 0 0 0-3-3"/>
+          </svg>
+          <span>Reconoc. Facial</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('plates')" id="nav-plates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+          </svg>
+          <span>Reconoc. Placas</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('routes')" id="nav-routes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span>Trazador de Rutas</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <a onclick="navigateTo('report')" id="nav-report">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>
+          </svg>
+          <span>Reporte Pericial</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+        <div class="nav-separator"><span>Gestión</span></div>
         <a onclick="navigateTo('suspects')" id="nav-suspects">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
           <span>Gestión de Sospechosos</span>
           <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </a>
-
         <a onclick="navigateTo('about')" id="nav-about">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
           <span>Acerca de</span>
           <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -114,14 +160,14 @@
           <div class="sidebar-avatar" id="sidebar-avatar">U</div>
           <div class="sidebar-user-info">
             <div class="sidebar-user-name" id="sidebar-username">Usuario</div>
-            <div class="sidebar-user-role" id="sidebar-role">Operador</div>
+            <div class="sidebar-user-role" id="sidebar-role">Investigador</div>
           </div>
         </div>
-        <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-          <button onclick="exportDB()" class="btn btn-secondary flex-1" style="font-size:0.7rem; padding: 0.5rem;" title="Exportar BD">
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+          <button onclick="exportDB()" class="btn btn-secondary flex-1" style="font-size:0.7rem;padding:0.5rem;" title="Exportar BD">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
-          <button onclick="document.getElementById('import-db-input').click()" class="btn btn-secondary flex-1" style="font-size:0.7rem; padding: 0.5rem;" title="Importar BD">
+          <button onclick="document.getElementById('import-db-input').click()" class="btn btn-secondary flex-1" style="font-size:0.7rem;padding:0.5rem;" title="Importar BD">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           </button>
           <input type="file" id="import-db-input" style="display:none;" accept=".db" onchange="importDB(event)">
@@ -138,13 +184,32 @@
     <!-- MAIN CONTENT -->
     <main class="main-area">
 
-      <!-- DASHBOARD -->
+      <!-- GEO BAR — Panel lateral derecho de geolocalización -->
+      <div class="geo-sidebar" id="geo-sidebar">
+        <div class="geo-sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          UBICACIÓN
+        </div>
+        <div id="geo-status" class="geo-status geo-waiting">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Solicitando...
+        </div>
+        <div id="geo-coords" class="geo-coords" style="display:none;"></div>
+        <div id="geo-accuracy" class="geo-accuracy" style="display:none;"></div>
+        <div id="geo-timestamp" class="geo-timestamp" style="display:none;"></div>
+      </div>
+
+      <!-- ===== DASHBOARD HUB ===== -->
       <div id="view-dashboard" class="view active">
         <div class="view-content">
           <div class="page-header">
             <div>
-              <h1>Centro de Control &amp; Monitoreo</h1>
-              <p id="dashboard-welcome">Bienvenido al sistema • Monitoreo en tiempo real</p>
+              <h1>Centro de Operaciones</h1>
+              <p id="dashboard-welcome">Selecciona un módulo para comenzar</p>
             </div>
             <div class="online-badge">
               <span class="online-dot"></span>
@@ -152,6 +217,166 @@
             </div>
           </div>
 
+          <!-- Grid de módulos -->
+          <div class="module-hub">
+
+            <!-- Módulo 1: Reconocimiento Facial -->
+            <div class="module-card module-card--facial" onclick="navigateTo('facial')">
+              <div class="module-card-glow"></div>
+              <div class="module-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M5.5 21c0-3.5 2.9-6.5 6.5-6.5s6.5 3 6.5 6.5"/>
+                  <path d="M9 7a3 3 0 0 1 3-3"/>
+                  <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="module-card-content">
+                <div class="module-card-badge">EN VIVO</div>
+                <h2 class="module-card-title">Reconocimiento Facial</h2>
+                <p class="module-card-desc">Identificación biométrica en tiempo real mediante cámara local o IP. Detección automática de sospechosos registrados en la base de datos.</p>
+                <div class="module-card-tags">
+                  <span>OpenCV</span><span>LBPH</span><span>MJPEG</span>
+                </div>
+              </div>
+              <button class="module-card-btn">
+                Abrir Módulo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <!-- Módulo 2: Reconocimiento de Placas -->
+            <div class="module-card module-card--plates" onclick="navigateTo('plates')">
+              <div class="module-card-glow"></div>
+              <div class="module-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="8" width="22" height="10" rx="2"/>
+                  <path d="M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/>
+                  <circle cx="7" cy="18" r="1.5"/>
+                  <circle cx="17" cy="18" r="1.5"/>
+                  <line x1="10" y1="13" x2="14" y2="13"/>
+                </svg>
+              </div>
+              <div class="module-card-content">
+                <div class="module-card-badge">COLOMBIA</div>
+                <h2 class="module-card-title">Reconocimiento de Placas</h2>
+                <p class="module-card-desc">Detección y lectura automática de placas vehiculares colombianas (ABC-123) en tiempo real. Integra OCR local sin internet requerido.</p>
+                <div class="module-card-tags">
+                  <span>EasyOCR</span><span>OpenCV</span><span>ANPR</span>
+                </div>
+              </div>
+              <button class="module-card-btn">
+                Abrir Módulo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <!-- Módulo 3: Trazador de Rutas -->
+            <div class="module-card module-card--routes" onclick="navigateTo('routes')">
+              <div class="module-card-glow"></div>
+              <div class="module-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/>
+                  <circle cx="12" cy="6" r="1" fill="currentColor"/>
+                  <circle cx="12" cy="18" r="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="module-card-content">
+                <div class="module-card-badge">NUEVO</div>
+                <h2 class="module-card-title">Trazador de Rutas</h2>
+                <p class="module-card-desc">Mapa interactivo para calcular y visualizar posibles rutas entre múltiples ubicaciones. Ideal para reconstruir trayectorias en investigaciones.</p>
+                <div class="module-card-tags">
+                  <span>Leaflet.js</span><span>OpenStreetMap</span><span>ORS</span>
+                </div>
+              </div>
+              <button class="module-card-btn">
+                Abrir Módulo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <!-- Módulo 4: Reporte Pericial -->
+            <div class="module-card module-card--report" onclick="navigateTo('report')">
+              <div class="module-card-glow"></div>
+              <div class="module-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <line x1="10" y1="9" x2="8" y2="9"/>
+                </svg>
+              </div>
+              <div class="module-card-content">
+                <div class="module-card-badge">FORENSE</div>
+                <h2 class="module-card-title">Generar Reporte Pericial</h2>
+                <p class="module-card-desc">Genera documentos forenses oficiales con datos del caso, sospechosos, alertas de detección y geolocalización del dispositivo.</p>
+                <div class="module-card-tags">
+                  <span>HTML/PDF</span><span>Forense</span><span>Oficial</span>
+                </div>
+              </div>
+              <button class="module-card-btn">
+                Abrir Módulo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats rápidas -->
+          <div class="stats-grid" id="dashboard-stats" style="margin-top:1.5rem;">
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-icon" style="background:rgba(37,99,235,0.1);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-suspects">—</div>
+              <div class="stat-label">Sospechosos registrados</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-icon" style="background:rgba(16,185,129,0.1);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21c0-3.5 2.9-6.5 6.5-6.5s6.5 3 6.5 6.5"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-photos">—</div>
+              <div class="stat-label">Fotos biométricas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-icon" style="background:rgba(245,158,11,0.1);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-alerts">0</div>
+              <div class="stat-label">Alertas activas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-icon" style="background:rgba(139,92,246,0.1);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-geo">—</div>
+              <div class="stat-label">Precisión GPS (m)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MÓDULO: RECONOCIMIENTO FACIAL ===== -->
+      <div id="view-facial" class="view">
+        <div class="view-content">
+          <div class="page-header">
+            <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Reconocimiento Facial</div>
+              <h1>Reconocimiento Facial</h1>
+              <p>Escaneo biométrico en tiempo real • Centro de Control & Monitoreo</p>
+            </div>
+            <div class="online-badge"><span class="online-dot"></span>En línea</div>
+          </div>
           <div class="dash-grid">
             <div>
               <div class="camera-feed" id="live-camera">
@@ -173,15 +398,12 @@
                   </div>
                 </div>
                 <div class="camera-bottom" id="camera-bottom" style="display:none;">
-                  <div class="camera-bottom-tag">
-                    <span>FORENSYS VISION • CÁMARA PRINCIPAL</span>
-                  </div>
+                  <div class="camera-bottom-tag"><span>FORENSYS VISION • CÁMARA FACIAL</span></div>
                 </div>
                 <div class="camera-corners" id="camera-corners" style="display:none;">
                   <div class="tl"></div><div class="tr"></div><div class="bl"></div><div class="br"></div>
                 </div>
               </div>
-
               <div class="camera-source-panel">
                 <div class="camera-source-grid">
                   <label>
@@ -204,37 +426,27 @@
                 </div>
                 <div class="camera-source-actions">
                   <button type="button" class="btn btn-secondary" onclick="loadCameraDevices()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                      <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
                     Detectar dispositivos
                   </button>
                   <span id="camera-source-status" class="camera-source-status">Camara predeterminada lista.</span>
                 </div>
               </div>
-
               <div style="display:flex;gap:1rem;margin-top:1rem;">
                 <button id="btn-camera-on" class="btn btn-primary flex-1" onclick="startCamera()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
-                  </svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   Activar Escáner Biométrico
                 </button>
                 <button id="btn-camera-off" class="btn btn-danger flex-1" onclick="stopCamera()" style="display:none;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                    <rect x="6" y="6" width="12" height="12" rx="2" ry="2"/>
-                  </svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"/></svg>
                   Apagar Cámara
                 </button>
               </div>
             </div>
-
             <div class="dash-section" style="max-height:600px;display:flex;flex-direction:column;">
               <div class="dash-section-title">
                 <h2>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                  </svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                   Alertas Activas
                 </h2>
               </div>
@@ -246,16 +458,392 @@
         </div>
       </div>
 
-      <!-- SUSPECTS -->
+      <!-- ===== MÓDULO: RECONOCIMIENTO DE PLACAS ===== -->
+      <div id="view-plates" class="view">
+        <div class="view-content">
+          <div class="page-header">
+            <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Reconocimiento de Placas</div>
+              <h1>Reconocimiento de Placas</h1>
+              <p>Detección automática de placas vehiculares colombianas • ANPR en tiempo real</p>
+            </div>
+            <div class="online-badge" style="background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:var(--medium);">
+              <span class="online-dot" style="background:var(--medium);"></span>
+              Colombia · ABC-123
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+             <label style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;display:block;">Motor de Inferencia</label>
+             <div style="display:flex; gap:0.5rem;">
+                <button id="btn-engine-ocr" class="btn btn-secondary active" onclick="setPlateEngine('ocr')" style="flex:1;">OCR Clásico (Offline)</button>
+                <button id="btn-engine-yolo" class="btn btn-secondary" onclick="setPlateEngine('yolo')" style="flex:1;">YOLO IA (Roboflow)</button>
+             </div>
+          </div>
+
+          <div class="dash-grid">
+            <div>
+              <div class="camera-feed" id="plate-camera-feed">
+                <div class="camera-placeholder" id="plate-status-msg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:64px;height:64px;opacity:0.3;margin-bottom:1rem;">
+                    <rect x="1" y="8" width="22" height="10" rx="2"/>
+                    <path d="M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/>
+                    <circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/>
+                    <line x1="10" y1="13" x2="14" y2="13"/>
+                  </svg>
+                  <p>Activar cámara para detección de placas vehiculares</p>
+                  <p style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;" id="plate-status-desc">La primera vez puede tardar unos segundos mientras carga el motor seleccionado</p>
+                </div>
+                <div class="scan-overlay" style="display:none;" id="plate-scan-overlay"></div>
+                <div class="camera-hud" id="plate-camera-hud" style="display:none;">
+                  <div class="camera-hud-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="8" width="22" height="10" rx="2"/></svg>
+                    <span class="camera-hud-text" style="color:#f59e0b;" id="plate-hud-title">MÓDULO PLACAS OCR</span>
+                  </div>
+                  <div class="camera-hud-right">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span class="camera-hud-text">EN VIVO</span>
+                  </div>
+                </div>
+                <div class="camera-bottom" id="plate-camera-bottom" style="display:none;">
+                  <div class="camera-bottom-tag"><span id="plate-bottom-tag">FORENSYS VISION • PLACAS CO</span></div>
+                </div>
+                <div class="camera-corners" id="plate-camera-corners" style="display:none;">
+                  <div class="tl" style="border-color:rgba(245,158,11,0.6);"></div>
+                  <div class="tr" style="border-color:rgba(245,158,11,0.6);"></div>
+                  <div class="bl" style="border-color:rgba(245,158,11,0.6);"></div>
+                  <div class="br" style="border-color:rgba(245,158,11,0.6);"></div>
+                </div>
+              </div>
+
+              <div class="camera-source-panel">
+                <div class="camera-source-grid">
+                  <label>
+                    <span>Fuente</span>
+                    <select id="plate-source-type" class="input-field" onchange="handlePlateSourceTypeChange()">
+                      <option value="local">Camara local / virtual</option>
+                      <option value="url">Camara IP / RTSP</option>
+                    </select>
+                  </label>
+                  <label id="plate-local-field">
+                    <span>Dispositivo</span>
+                    <select id="plate-device-select" class="input-field">
+                      <option value="0|dshow">Camara local 0 (DirectShow)</option>
+                    </select>
+                  </label>
+                  <label id="plate-url-field" style="display:none;">
+                    <span>URL de transmision</span>
+                    <input id="plate-url-input" class="input-field" type="text" placeholder="rtsp://usuario:clave@ip:554/stream">
+                  </label>
+                </div>
+                <div class="camera-source-actions">
+                  <button type="button" class="btn btn-secondary" onclick="loadPlateCameraDevices()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+                    Detectar dispositivos
+                  </button>
+                  <span id="plate-source-status" class="camera-source-status">Camara predeterminada lista.</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:1rem;margin-top:1rem;">
+                <button id="btn-plate-on" class="btn btn-primary flex-1" onclick="startPlateCamera()" style="background:linear-gradient(135deg,#b45309,#d97706);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Activar Lector de Placas
+                </button>
+                <button id="btn-plate-off" class="btn btn-danger flex-1" onclick="stopPlateCamera()" style="display:none;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"/></svg>
+                  Apagar Cámara
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel informativo de placas -->
+            <div class="dash-section" style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="dash-section-title">
+                <h2>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="1" y="8" width="22" height="10" rx="2"/></svg>
+                  Información del Sistema
+                </h2>
+              </div>
+              <div class="plate-info-panel" id="plate-info-ocr">
+                <div class="plate-info-item">
+                  <div class="plate-info-label">Motor OCR</div>
+                  <div class="plate-info-value">EasyOCR (offline)</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label">Idiomas</div>
+                  <div class="plate-info-value">Español + Inglés</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label">Formato Colombia</div>
+                  <div class="plate-info-value mono">ABC-123 / AB-1234</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label">Detección</div>
+                  <div class="plate-info-value">OpenCV + Canny</div>
+                </div>
+              </div>
+              <div class="plate-info-panel" id="plate-info-yolo" style="display:none; border-color:rgba(0,150,255,0.3); background:rgba(0,150,255,0.05);">
+                <div class="plate-info-item">
+                  <div class="plate-info-label" style="color:rgba(0,150,255,1);">Motor IA</div>
+                  <div class="plate-info-value">YOLOv8 (Roboflow)</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label" style="color:rgba(0,150,255,1);">Modelo</div>
+                  <div class="plate-info-value">proyecto-placas-8arfj</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label" style="color:rgba(0,150,255,1);">Operación</div>
+                  <div class="plate-info-value mono">Nube (API)</div>
+                </div>
+                <div class="plate-info-item">
+                  <div class="plate-info-label" style="color:rgba(0,150,255,1);">Detección</div>
+                  <div class="plate-info-value">Bounding Box (CO)</div>
+                </div>
+              </div>
+              <div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:8px;padding:1rem;">
+                <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;" id="plate-tip-text">
+                  <strong style="color:var(--medium);">Tip:</strong> Para mejores resultados con el OCR clásico, asegúrate de que la placa esté bien iluminada y el vehículo no esté en movimiento rápido. El sistema detecta placas colombianas en los formatos ABC-123 y AB-1234.
+                </p>
+              </div>
+              <div style="background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.15);border-radius:8px;padding:1rem;">
+                <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;">
+                  <strong style="color:var(--accent-bright);">Primera vez:</strong> EasyOCR descargará sus modelos de texto (~400MB) al activar la cámara por primera vez. Esto es un proceso único que puede tardar algunos minutos dependiendo de tu conexión.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MÓDULO: TRAZADOR DE RUTAS ===== -->
+      <div id="view-routes" class="view">
+        <div class="view-content view-content--fullwidth">
+          <div class="page-header">
+            <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Trazador de Rutas</div>
+              <h1>Trazador de Rutas Forense</h1>
+              <p>Reconstrucción y análisis de trayectorias mediante mapa interactivo</p>
+            </div>
+            <div class="online-badge" style="background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;">
+              <span class="online-dot" style="background:#a78bfa;"></span>
+              OpenStreetMap
+            </div>
+          </div>
+
+          <div class="route-layout">
+            <!-- Panel de controles -->
+            <div class="route-controls-panel">
+
+              <!-- Modo de entrada -->
+              <div class="route-section-card">
+                <div class="route-section-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Fuente de Ubicaciones
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                  <button class="route-mode-btn active" id="btn-mode-manual" onclick="setRouteMode('manual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Coordenadas manuales
+                  </button>
+                  <button class="route-mode-btn" id="btn-mode-file" onclick="setRouteMode('file')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Cargar archivo
+                    <span class="dev-badge">En desarrollo</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Panel manual -->
+              <div id="manual-mode-panel" class="route-section-card">
+                <div class="route-section-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/></svg>
+                  Puntos de la Ruta
+                </div>
+                <div id="waypoints-list"></div>
+                <button class="btn btn-secondary btn-full" onclick="addWaypointInput()" style="margin-top:0.75rem;font-size:0.8rem;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                  Añadir punto
+                </button>
+                <p style="font-size:0.7rem;color:var(--muted);margin-top:0.5rem;text-align:center;">O haz clic directamente en el mapa</p>
+              </div>
+
+              <!-- Panel de archivo (en desarrollo) -->
+              <div id="file-mode-panel" class="route-section-card" style="display:none;">
+                <div class="route-section-header">Cargar archivo de ubicaciones</div>
+                <div class="dev-notice">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;opacity:0.4;margin-bottom:0.75rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  <strong>Módulo en Desarrollo</strong>
+                  <p>La carga de archivos de exportación de ubicaciones (GPX, KML, CSV) estará disponible en una próxima versión.</p>
+                </div>
+              </div>
+
+              <!-- Configuración de rutas -->
+              <div class="route-section-card">
+                <div class="route-section-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                  Configuración
+                </div>
+                <div class="slider-group">
+                  <div class="slider-label-row">
+                    <span>Rutas alternativas</span>
+                    <span class="slider-value" id="routes-count-label">3</span>
+                  </div>
+                  <input type="range" id="routes-count" class="route-slider" min="1" max="5" value="3"
+                         oninput="document.getElementById('routes-count-label').textContent=this.value">
+                  <div class="slider-minmax"><span>1</span><span>5 (máx)</span></div>
+                </div>
+                <div style="margin-top:0.75rem;">
+                  <label style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Tipo de vía</label>
+                  <select id="route-profile" class="input-field" style="font-size:0.8rem;">
+                    <option value="driving-car">Vehículo (auto)</option>
+                    <option value="cycling-regular">Bicicleta</option>
+                    <option value="foot-walking">A pie</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Acciones -->
+              <button class="btn btn-primary btn-full" onclick="calculateRoutes()" id="btn-calculate-routes" style="background:linear-gradient(135deg,#5b21b6,#7c3aed);font-size:0.875rem;padding:0.75rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/></svg>
+                Calcular Rutas
+              </button>
+              <button class="btn btn-secondary btn-full" onclick="clearRoutes()" style="font-size:0.8rem;margin-top:0.5rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Limpiar todo
+              </button>
+
+              <!-- Resultados de rutas -->
+              <div id="route-results-panel" style="display:none;" class="route-section-card">
+                <div class="route-section-header">Rutas Calculadas</div>
+                <div id="route-results-list"></div>
+              </div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="route-map-wrapper">
+              <div id="route-map"></div>
+              <div class="map-hint" id="map-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Haz clic en el mapa para agregar puntos de ruta
+              </div>
+              <div class="map-loading" id="map-loading" style="display:none;">
+                <div class="map-loading-spinner"></div>
+                <span>Calculando rutas...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MÓDULO: REPORTE PERICIAL ===== -->
+      <div id="view-report" class="view">
+        <div class="view-content" style="max-width:800px;">
+          <div class="page-header">
+            <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Reporte Pericial</div>
+              <h1>Generar Reporte Pericial</h1>
+              <p>Documentación forense oficial con datos del sistema</p>
+            </div>
+          </div>
+
+          <div class="panel mb-2">
+            <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1.25rem;">
+              Datos del Caso
+            </h2>
+            <form id="report-form" onsubmit="generateReport(event)">
+              <div class="grid-2 mb-1">
+                <div>
+                  <label style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Número de Caso</label>
+                  <input type="text" id="report-case" class="input-field" placeholder="Ej: FC-2026-001" required>
+                </div>
+                <div>
+                  <label style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Investigador a Cargo</label>
+                  <input type="text" id="report-investigator" class="input-field" placeholder="Nombre completo">
+                </div>
+              </div>
+              <div class="mb-1">
+                <label style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.375rem;">Observaciones / Narrativa del Caso</label>
+                <textarea id="report-observations" class="input-field" rows="5"
+                  placeholder="Describe los hechos relevantes del caso, metodología de investigación, conclusiones preliminares..."
+                  style="resize:vertical;line-height:1.6;"></textarea>
+              </div>
+
+              <div class="mb-1">
+                <label style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.5rem;">Sospechosos a incluir</label>
+                <div class="report-option">
+                  <input type="checkbox" id="report-all-suspects" checked onchange="toggleSuspectSelection(this)">
+                  <label for="report-all-suspects">Incluir todos los sospechosos registrados</label>
+                </div>
+                <div id="suspect-selection" style="display:none;margin-top:0.75rem;max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:0.75rem;" id="suspect-checkboxes">
+                  <p class="text-muted" style="font-size:0.8rem;">Cargando lista de sospechosos...</p>
+                </div>
+              </div>
+
+              <div style="background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:8px;padding:1rem;margin-bottom:1.25rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" style="width:14px;height:14px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span style="font-size:0.75rem;color:#a78bfa;font-weight:600;">Geolocalización del dispositivo</span>
+                </div>
+                <div id="report-geo-display" style="font-size:0.8rem;color:var(--muted);">Obteniendo ubicación...</div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full btn-lg" id="btn-generate-report"
+                style="background:linear-gradient(135deg,#1e3a5f,#2563eb);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Generar Reporte Pericial
+              </button>
+            </form>
+          </div>
+
+          <!-- Info del reporte -->
+          <div class="panel" style="border-color:rgba(37,99,235,0.2);">
+            <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">
+              Contenido del Reporte
+            </h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+              <div class="report-content-item">
+                <span class="report-content-icon">📍</span>
+                <div>
+                  <div style="font-size:0.8rem;font-weight:600;">Geolocalización</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">Coordenadas del dispositivo</div>
+                </div>
+              </div>
+              <div class="report-content-item">
+                <span class="report-content-icon">👤</span>
+                <div>
+                  <div style="font-size:0.8rem;font-weight:600;">Base de sospechosos</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">Con fotos y antecedentes</div>
+                </div>
+              </div>
+              <div class="report-content-item">
+                <span class="report-content-icon">🚨</span>
+                <div>
+                  <div style="font-size:0.8rem;font-weight:600;">Historial de alertas</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">Detecciones recientes</div>
+                </div>
+              </div>
+              <div class="report-content-item">
+                <span class="report-content-icon">🕐</span>
+                <div>
+                  <div style="font-size:0.8rem;font-weight:600;">Timestamp oficial</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">Fecha y hora del sistema</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GESTIÓN DE SOSPECHOSOS ===== -->
       <div id="view-suspects" class="view">
         <div class="view-content" style="max-width:800px;">
           <div class="page-header">
             <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Gestión</div>
               <h1>Base de Datos de Sujetos</h1>
               <p>Gestión de sospechosos y registros biométricos</p>
             </div>
           </div>
-
           <div class="panel mb-2">
             <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Registrar Nuevo Sujeto</h2>
             <form id="suspect-form" onsubmit="handleAddSuspect(event)">
@@ -265,73 +853,48 @@
                 <input type="text" id="s-id" class="input-field" placeholder="Cédula / Identificador Único" required>
                 <input type="text" id="s-behavior" class="input-field" placeholder="Conductas / Antecedentes (ej. hurto, homicidio)" required>
               </div>
-
               <div style="border:1px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
                 <p class="text-muted mb-1" style="font-size:0.875rem;">Cámara de Fichaje (Foto Facial)</p>
                 <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
                   <input type="file" id="s-photo" accept="image/*" style="display:none;">
                   <button type="button" class="btn btn-secondary" onclick="document.getElementById('s-photo').click()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Subir Foto
                   </button>
                   <button type="button" class="btn btn-secondary" onclick="openWebcamModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                      <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                     Capturar con Cámara
                   </button>
                 </div>
                 <p id="s-photo-name" class="mt-1" style="color:var(--text);font-size:0.8rem;"></p>
               </div>
-
-              <div style="border:1px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
-                <p class="text-muted mb-1" style="font-size:0.875rem;">Huellero USB Digital (Simulado)</p>
-                <input type="file" id="s-fingerprint" accept="image/*" style="display:none;">
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('s-fingerprint').click()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                  </svg>
-                  Subir Captura de Huella
-                </button>
-              </div>
-
               <button type="submit" class="btn btn-primary btn-full btn-lg">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 Registrar Sujeto en Base de Datos
               </button>
             </form>
           </div>
-
           <div class="panel">
             <h2 style="color:var(--accent-bright);font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Registros Recientes</h2>
-            <div id="suspects-list" style="min-height:100px;">
-              Cargando...
-            </div>
+            <div id="suspects-list" style="min-height:100px;">Cargando...</div>
           </div>
         </div>
       </div>
 
-
-
-      <!-- ABOUT -->
+      <!-- ===== ABOUT ===== -->
       <div id="view-about" class="view">
         <div class="view-content" style="max-width:750px;">
           <div class="page-header">
             <div>
+              <div class="breadcrumb"><span onclick="navigateTo('dashboard')">Dashboard</span> / Acerca de</div>
               <h1>Acerca del Proyecto</h1>
-              <p>ForenSys Vision V1 — Sistema de Inteligencia Forense Digital</p>
+              <p>ForenSys Vision V2 — Sistema de Inteligencia Forense Digital</p>
             </div>
           </div>
-
           <div class="panel text-center mb-2">
             <p class="text-muted" style="margin-bottom:2rem;line-height:1.7;">
-              <strong style="color:var(--text);">ForenSys Vision V1</strong> es un sistema de inteligencia forense digital desarrollado como proyecto de grado. Integra reconocimiento facial en tiempo real mediante OpenCV LBPH, un motor de predicción estadística de conductas delictivas, gestión de base de datos de sospechosos y monitoreo biométrico en vivo.
+              <strong style="color:var(--text);">ForenSys Vision V2</strong> es un sistema de inteligencia forense digital desarrollado como proyecto de grado. Integra reconocimiento facial y de placas en tiempo real, trazado de rutas geoespaciales, generación de reportes periciales y geolocalización persistente del dispositivo.
             </p>
-
             <div style="border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem;background:rgba(37,99,235,0.03);">
               <h3 style="color:var(--accent-bright);margin-bottom:1rem;font-size:1rem;">Desarrollador</h3>
               <p style="font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Andrés González</p>
@@ -351,31 +914,31 @@
                 </a>
               </div>
             </div>
-
             <div class="about-tech-grid">
               <div class="about-tech-item">
-                <h4>Tecnologías</h4>
+                <h4>Tecnologías V2</h4>
                 <ul>
                   <li>Python 3 + FastAPI</li>
-                  <li>OpenCV + LBPH Facial Recognition</li>
+                  <li>OpenCV + YuNet + LBPH</li>
+                  <li>EasyOCR (placas)</li>
+                  <li>Leaflet.js + OpenStreetMap</li>
                   <li>SQLAlchemy + SQLite</li>
-                  <li>Scikit-learn (Predicción)</li>
                   <li>HTML5 / CSS3 / JavaScript</li>
                 </ul>
               </div>
               <div class="about-tech-item">
-                <h4>Funcionalidades</h4>
+                <h4>Módulos V2</h4>
                 <ul>
                   <li>Reconocimiento facial en vivo</li>
+                  <li>Reconocimiento de placas CO</li>
+                  <li>Trazador de rutas forense</li>
+                  <li>Generador de reportes periciales</li>
+                  <li>Geolocalización persistente</li>
                   <li>Gestión CRUD de sospechosos</li>
-                  <li>Captura de foto con webcam</li>
-                  <li>Algoritmo predictivo forense</li>
-                  <li>Autenticación con roles</li>
                 </ul>
               </div>
             </div>
-
-            <p style="color:rgba(255,255,255,0.15);font-size:0.75rem;margin-top:2rem;">v1.0 — 2026 — Cestelco</p>
+            <p style="color:rgba(255,255,255,0.15);font-size:0.75rem;margin-top:2rem;">v2.0 — 2026 — Cestelco</p>
           </div>
         </div>
       </div>

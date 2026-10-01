@@ -10,6 +10,7 @@ __pycache__/
 ciberforense.db
 
 *.png
+!forensys-vision.png
 *.jpg
 *.jpeg
 *.gif
@@ -21,6 +22,9 @@ ml_models/
 .env.*
 secretos/
 keys/
+
+# Archivo de configuración con claves privadas — NO subir al repo
+config.py
 
 .DS_Store
 Thumbs.db
