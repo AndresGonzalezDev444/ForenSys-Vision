@@ -104,8 +104,7 @@ El flujo general es:
 🚨 Posible alerta / evento
 ```
 
-El backend admite fuentes locales y URLs `rtsp://`, `http://` y `https://` para el módulo de video. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
-
+El backend admite fuentes locales y URLs `rtsp://`, `http://` y `https://` para el módulo de video.
 ---
 
 # 🚘 2. Reconocimiento de placas
@@ -134,7 +133,7 @@ El segundo motor utiliza:
 - Bounding Boxes
 - API en la nube
 
-La propia interfaz identifica el modelo como `proyecto-placas-8arfj` y diferencia entre el procesamiento OCR local y el procesamiento YOLO mediante API. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html
+La propia interfaz identifica el modelo como `proyecto-placas-8arfj` y diferencia entre el procesamiento OCR local y el procesamiento YOLO mediante API.
 
 Formatos contemplados por la interfaz:
 
@@ -155,8 +154,7 @@ La interfaz incorpora un panel de **ubicación** con:
 
 También utiliza la geolocalización dentro de la generación de reportes periciales.
 
-El reporte registra la ubicación proporcionada por el sistema y la hora en la que se genera el documento. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
-
+El reporte registra la ubicación proporcionada por el sistema y la hora en la que se genera el documento.
 ---
 
 # 🗺️ 4. Trazador de rutas forense
@@ -184,7 +182,7 @@ El backend recibe una lista de puntos:
 
 y devuelve las rutas calculadas en **GeoJSON**.
 
-Actualmente el backend admite entre **1 y 5 rutas alternativas**. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Actualmente el backend admite entre **1 y 5 rutas alternativas**.
 
 ### 🔐 Configuración de OpenRouteService
 
@@ -200,7 +198,7 @@ con la variable:
 ORS_API_KEY = "TU_API_KEY"
 ```
 
-Si `config.py` no existe o no contiene la clave, el módulo de rutas no podrá realizar los cálculos. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Si `config.py` no existe o no contiene la clave, el módulo de rutas no podrá realizar los cálculos.
 
 > **Nunca publiques tu API Key en GitHub.** Mantén `config.py` fuera del control de versiones o utiliza una estrategia de variables de entorno.
 
@@ -220,9 +218,9 @@ Cada alerta puede almacenar:
 📝 Detalles
 ```
 
-La estructura de base de datos incluye una entidad `Alert` relacionada con `Suspect`. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/models.py
+La estructura de base de datos incluye una entidad `Alert` relacionada con `Suspect`.
 
-Estas alertas también pueden aparecer posteriormente en los reportes periciales generados por el sistema. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Estas alertas también pueden aparecer posteriormente en los reportes periciales generados por el sistema.
 
 ---
 
@@ -240,7 +238,7 @@ Cada sujeto puede almacenar:
 - Huella dactilar.
 - Fotografías faciales asociadas.
 
-Las fotografías faciales también almacenan el ángulo de captura y la fecha de creación. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/models.py
+Las fotografías faciales también almacenan el ángulo de captura y la fecha de creación.
 
 El backend permite:
 
@@ -252,7 +250,7 @@ PUT     /api/suspects/{id}
 DELETE  /api/suspects/{id}
 ```
 
-Además, después de agregar o eliminar fotografías, el proyecto ejecuta un proceso de reentrenamiento del modelo facial. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Además, después de agregar o eliminar fotografías, el proyecto ejecuta un proceso de reentrenamiento del modelo facial.
 
 ---
 
@@ -270,7 +268,7 @@ El sistema las almacena en:
 static/faces/
 ```
 
-y relaciona cada fotografía con el sujeto correspondiente. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+y relaciona cada fotografía con el sujeto correspondiente.
 
 También permite registrar diferentes ángulos:
 
@@ -297,9 +295,9 @@ El reporte puede incluir:
 - Historial de alertas.
 - Observaciones del investigador.
 
-El documento se genera automáticamente y se entrega como archivo HTML. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+El documento se genera automáticamente y se entrega como archivo HTML.
 
-La interfaz lo presenta como un documento preparado para documentación forense y posterior impresión/exportación desde el navegador. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html
+La interfaz lo presenta como un documento preparado para documentación forense y posterior impresión/exportación desde el navegador.
 
 ### 🧾 Estructura del reporte
 
@@ -343,7 +341,7 @@ con la conexión:
 sqlite:///./ciberforense.db
 ```
 
-SQLAlchemy se utiliza como ORM para manejar las entidades del sistema. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/database.py
+SQLAlchemy se utiliza como ORM para manejar las entidades del sistema.
 
 ### Entidades principales
 
@@ -359,7 +357,7 @@ Suspect
  └── Alert
 ```
 
-La estructura actual contempla usuarios, sujetos, fotografías faciales y alertas. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/models.py
+La estructura actual contempla usuarios, sujetos, fotografías faciales y alertas.
 
 ---
 
@@ -377,7 +375,7 @@ El backend expone:
 POST /api/login
 ```
 
-para el inicio de sesión. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+para el inicio de sesión.
 
 ### ⚠️ Credenciales iniciales
 
@@ -388,7 +386,7 @@ Usuario: admin
 Contraseña: admin123
 ```
 
-Esto está definido directamente en el código de startup. **Debe cambiarse antes de utilizar el sistema en un entorno real.** citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Esto está definido directamente en el código de startup. **Debe cambiarse antes de utilizar el sistema en un entorno real.**
 
 ---
 
@@ -408,7 +406,7 @@ GET  /api/database/export
 POST /api/database/import
 ```
 
-Esto permite transportar una base de datos de laboratorio o realizar respaldos del estado del sistema. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Esto permite transportar una base de datos de laboratorio o realizar respaldos del estado del sistema.
 
 ---
 
@@ -474,7 +472,7 @@ Esto permite transportar una base de datos de laboratorio o realizar respaldos d
 | 🧪 **scikit-learn** | Componentes de análisis/modelado |
 | 📷 **MJPEG** | Streaming de video |
 
-La interfaz del proyecto identifica explícitamente Python/FastAPI, OpenCV + YuNet + LBPH, EasyOCR, Leaflet/OpenStreetMap, SQLAlchemy/SQLite y HTML/CSS/JavaScript como parte de la V2. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html
+La interfaz del proyecto identifica explícitamente Python/FastAPI, OpenCV + YuNet + LBPH, EasyOCR, Leaflet/OpenStreetMap, SQLAlchemy/SQLite y HTML/CSS/JavaScript como parte de la V2.
 
 ---
 
@@ -487,7 +485,7 @@ La interfaz del proyecto identifica explícitamente Python/FastAPI, OpenCV + YuN
 - Conexión a Internet para servicios externos como OpenRouteService y, en el modo correspondiente, Roboflow.
 - Una API Key de OpenRouteService para el trazador de rutas.
 
-Para OCR con EasyOCR, la primera ejecución puede descargar aproximadamente **400 MB de modelos** según la información mostrada en la interfaz. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html
+Para OCR con EasyOCR, la primera ejecución puede descargar aproximadamente **400 MB de modelos** según la información mostrada en la interfaz.
 
 ---
 
@@ -552,7 +550,7 @@ Puedes ejecutar:
 setup.bat
 ```
 
-desde Windows. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/setup.bat
+desde Windows.
 
 ---
 
@@ -592,7 +590,6 @@ El script ejecuta:
 venv\Scripts\python main.py
 ```
 
-citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/iniciar.bat
 
 ---
 
@@ -610,8 +607,7 @@ El backend inicia Uvicorn en:
 http://127.0.0.1:8000
 ```
 
-El propio `main.py` configura ese host y puerto cuando se ejecuta directamente. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
-
+El propio `main.py` configura ese host y puerto cuando se ejecuta directamente.
 ---
 
 # 📚 Documentación de la API
@@ -657,7 +653,7 @@ http://127.0.0.1:8000/redoc
 | `GET` | `/api/database/export` | Exportar BD |
 | `POST` | `/api/database/import` | Importar BD |
 
-Estos endpoints están definidos en el backend actual del proyecto. citehttps://raw.githubusercontent.com/AndresGonzalezDev444/ForenSys-Vision/main/main.py
+Estos endpoints están definidos en el backend actual del proyecto.
 
 ---
 
@@ -805,7 +801,7 @@ La versión actual concentra principalmente:
 ✅ Autenticación
 ```
 
-El propio apartado "Acerca del Proyecto" identifica la aplicación como **ForenSys Vision V2** y la describe como un proyecto de grado que integra reconocimiento facial y de placas en tiempo real, trazado de rutas geoespaciales, generación de reportes y geolocalización persistente. citehttps://github.com/AndresGonzalezDev444/ForenSys-Vision/blob/main/static/index.html
+El propio apartado "Acerca del Proyecto" identifica la aplicación como **ForenSys Vision V2** y la describe como un proyecto de grado que integra reconocimiento facial y de placas en tiempo real, trazado de rutas geoespaciales, generación de reportes y geolocalización persistente.
 
 ---
 
